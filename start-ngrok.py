@@ -68,7 +68,7 @@ def main():
     
     if args.token != '':
       ngrok.kill()
-      srv = ngrok.connect(7860, pyngrok_config=conf.PyngrokConfig(auth_token=args.token),
+      srv = ngrok.connect(7865, pyngrok_config=conf.PyngrokConfig(auth_token=args.token),
                     bind_tls=True, domain=args.domain).public_url
       print(srv)
 
