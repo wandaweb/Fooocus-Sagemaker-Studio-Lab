@@ -2,7 +2,9 @@ import argparse
 import json
 from pyngrok import ngrok, conf
 import os
+import psutil
 import signal
+import socket
 import sys
 import subprocess
 
@@ -21,8 +23,30 @@ def save_data(data):
 def signal_handler(sig, frame):
     print('You pressed Ctrl+C!')
     sys.exit(0)
+    
+def is_port_in_use(port):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        return s.connect_ex(('127.0.0.1', port)) == 0
+    
+def find_and_terminate_process(port):
+    for process in psutil.process_iter(['pid', 'name', 'connections']):
+        for conn in process.info.get('connections', []):
+            if conn.laddr.port == port:
+                print(f"Port {port} is in use by process {process.info['name']} (PID {process.info['pid']})")
+                try:
+                    process.terminate()
+                    print(f"Terminated process with PID {process.info['pid']}")
+                except psutil.NoSuchProcess:
+                    print(f"Process with PID {process.info['pid']} not found")
         
 def main():
+    target_port = 7865
+    
+    if is_port_in_use(target_port):
+        find_and_terminate_process(target_port)
+    else:
+        print(f"Port {target_port} is free.")
+    
     parser = argparse.ArgumentParser(description='Console app with token and domain arguments')
     parser.add_argument('--token', help='Specify the token')
     parser.add_argument('--domain', help='Specify the domain')
@@ -68,7 +92,7 @@ def main():
     
     if args.token != '':
       ngrok.kill()
-      srv = ngrok.connect(7865, pyngrok_config=conf.PyngrokConfig(auth_token=args.token),
+      srv = ngrok.connect(target_port, pyngrok_config=conf.PyngrokConfig(auth_token=args.token),
                     bind_tls=True, domain=args.domain).public_url
       print(srv)
 
