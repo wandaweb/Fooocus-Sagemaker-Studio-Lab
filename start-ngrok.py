@@ -98,7 +98,7 @@ def main():
 
       signal.signal(signal.SIGINT, signal_handler)
       print('Press Ctrl+C to exit')
-      cmd = 'python Fooocus/entry_with_update.py'
+      cmd = 'python Fooocus/entry_with_update.py --always-high-vram'
       env = os.environ.copy()
       subprocess.run(cmd, shell=True, env=env)
       signal.pause()
