@@ -1,20 +1,43 @@
 #!/bin/bash
+
+# Set this variable to true to install to the temporary folder, or to false to have the installation in permanent storage.
+install_in_temp_dir=true
+
 if [ ! -d "Fooocus" ]
 then
   git clone https://github.com/lllyasviel/Fooocus.git
-  #git clone --depth 1 --branch V2 https://github.com/lllyasviel/Fooocus.git
-  # Create the config file pointing the checkpoints to checkpoints-real-folder
 fi
 cd Fooocus
 git pull
-if [ ! -L ~/.conda/envs/fooocus ]
+if [ "$install_in_temp_dir" = true ]
 then
+  echo "Installation folder: /tmp/fooocus"
+  if [ ! -L ~/.conda/envs/fooocus ]
+  then
+    echo "removing ~/.conda/envs/fooocus"
+    rm -rf ~/.conda/envs/fooocus
+    rmdir ~/.conda/envs/fooocus
     ln -s /tmp/fooocus ~/.conda/envs/
+  fi
+else
+  echo "Installation folder: ~/.conda/envs/fooocus"
+  if [ -L ~/.conda/envs/fooocus ]
+  then
+    rm ~/.conda/envs/fooocus
+  fi
 fi
 eval "$(conda shell.bash hook)"
-if [ ! -d /tmp/fooocus ]
+if [ ! -d ~/.conda/envs/fooocus ]
+then 
+    echo ".conda/envs/fooocus is not a directory or does not exist"
+fi
+if [ "$install_in_temp_dir" = true ] && [ ! -d /tmp/fooocus ] || [ "$install_in_temp_dir" = false ] && [ ! -d ~/.conda/envs/fooocus ]
 then
-    mkdir /tmp/fooocus
+    echo "Installing"
+    if [ "$install_in_temp_dir" = true ] && [ ! -d /tmp/fooocus ]
+    then
+        mkdir /tmp/fooocus
+    fi
     conda env create -f environment.yaml
     conda activate fooocus
     pwd
