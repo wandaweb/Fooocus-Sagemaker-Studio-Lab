@@ -94,7 +94,9 @@ def main():
       ngrok.kill()
       srv = ngrok.connect(target_port, pyngrok_config=conf.PyngrokConfig(auth_token=args.token),
                     bind_tls=True, domain=args.domain).public_url
-      print(srv)
+      print('---------')
+      print('Your URL is: ' + srv)
+      print('---------')
 
       signal.signal(signal.SIGINT, signal_handler)
       print('Press Ctrl+C to exit')
