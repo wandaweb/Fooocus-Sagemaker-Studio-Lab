@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Set this variable to true to install to the temporary folder, or to false to have the installation in permanent storage.
-install_in_temp_dir=false
+install_in_temp_dir=true
 
 if [ ! -d "Fooocus" ]
 then
