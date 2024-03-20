@@ -11,13 +11,13 @@ cd Fooocus
 git pull
 if [ "$install_in_temp_dir" = true ]
 then
-  echo "Installation folder: /tmp/fooocus"
+  echo "Installation folder: /tmp/fooocus_env"
   if [ ! -L ~/.conda/envs/fooocus ]
   then
     echo "removing ~/.conda/envs/fooocus"
     rm -rf ~/.conda/envs/fooocus
     rmdir ~/.conda/envs/fooocus
-    ln -s /tmp/fooocus ~/.conda/envs/
+    ln -s /tmp/fooocus_env ~/.conda/envs/fooocus
   fi
 else
   echo "Installation folder: ~/.conda/envs/fooocus"
@@ -31,12 +31,17 @@ if [ ! -d ~/.conda/envs/fooocus ]
 then 
     echo ".conda/envs/fooocus is not a directory or does not exist"
 fi
-if [ "$install_in_temp_dir" = true ] && [ ! -d /tmp/fooocus ] || [ "$install_in_temp_dir" = false ] && [ ! -d ~/.conda/envs/fooocus ]
+if [ ! -d /tmp/fooocus_env ] 
+then
+    echo "/tmp/fooocus_env is currently not a directory"
+fi
+if [ "$install_in_temp_dir" = true ] && [ ! -d /tmp/fooocus_env ] || [ "$install_in_temp_dir" = false ] && [ ! -d ~/.conda/envs/fooocus ]
 then
     echo "Installing"
-    if [ "$install_in_temp_dir" = true ] && [ ! -d /tmp/fooocus ]
+    if [ "$install_in_temp_dir" = true ] && [ ! -d /tmp/fooocus_env ]
     then
-        mkdir /tmp/fooocus
+        echo "Creating /tmp/fooocus_env"
+        mkdir /tmp/fooocus_env
     fi
     conda env create -f environment.yaml
     conda activate fooocus
@@ -45,7 +50,8 @@ then
     pip install -r requirements_versions.txt
     pip install torch torchvision --force-reinstall --index-url https://download.pytorch.org/whl/cu117
     pip install pyngrok
-    conda install glib -y
+    rm -f /opt/conda/.condarc
+    conda install -y conda-forge::glib
     rm -rf ~/.cache/pip
 fi
 
