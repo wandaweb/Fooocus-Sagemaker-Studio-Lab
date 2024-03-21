@@ -1,0 +1,8 @@
+{
+  "path_checkpoints": "/home/studio-lab-user/sagemaker-studiolab-notebooks/Fooocus-Sagemaker-Studio-Lab/Fooocus/models/checkpoints-real-folder",
+  "default_model": "irislux.safetensors",
+  "checkpoint_downloads": {
+    "irislux.safetensors": "https://civitai.com/api/download/models/302680"
+  },
+  "previous_default_models": []
+}
